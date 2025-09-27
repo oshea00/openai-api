@@ -5,7 +5,9 @@ client = OpenAI()
 
 
 def basic_text_chat(question):
-    response = client.responses.create(model="gpt-5", input=question)
+    response = client.responses.create(
+        model="gpt-5", input=question
+    )
     print(response.output_text)
 
 
@@ -18,7 +20,10 @@ def structured_response_model(model, question):
     response = client.responses.parse(
         model=model,
         input=[
-            {"role": "system", "content": "Extract the event information."},
+            {
+                "role": "system",
+                "content": "Extract the event information.",
+            },
             {"role": "user", "content": question},
         ],
         text_format=CalendarEvent,
@@ -58,7 +63,10 @@ def structure_response_text():
                 "role": "system",
                 "content": "You are a helpful math tutor. Guide the user through the solution step by step.",
             },
-            {"role": "user", "content": "how can I solve 8x + 7 = -23"},
+            {
+                "role": "user",
+                "content": "how can I solve 8x + 7 = -23",
+            },
         ],
         text={
             "format": {
@@ -72,16 +80,28 @@ def structure_response_text():
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "explanation": {"type": "string"},
-                                    "output": {"type": "string"},
+                                    "explanation": {
+                                        "type": "string"
+                                    },
+                                    "output": {
+                                        "type": "string"
+                                    },
                                 },
-                                "required": ["explanation", "output"],
+                                "required": [
+                                    "explanation",
+                                    "output",
+                                ],
                                 "additionalProperties": False,
                             },
                         },
-                        "final_answer": {"type": "string"},
+                        "final_answer": {
+                            "type": "string"
+                        },
                     },
-                    "required": ["steps", "final_answer"],
+                    "required": [
+                        "steps",
+                        "final_answer",
+                    ],
                     "additionalProperties": False,
                 },
                 "strict": True,
@@ -89,6 +109,16 @@ def structure_response_text():
         },
     )
     print(response.output_text)
+
+
+def extract_reasoning_summary(response):
+    summary = ""
+    return " ".join(
+        s.text
+        for r in response.output
+        if r.type == "reasoning"
+        for s in r.summary
+    )
 
 
 def response_with_reasoning():
@@ -99,30 +129,37 @@ def response_with_reasoning():
                 "role": "system",
                 "content": "You are a helpful math tutor. Guide the user through the solution step by step.",
             },
-            {"role": "user", "content": "how can I solve 8x + 7 = -23"},
+            {
+                "role": "user",
+                "content": "how can I solve 8x + 7 = -23",
+            },
         ],
-        reasoning={"effort": "medium", "summary": "auto"},
+        reasoning={
+            "effort": "medium",
+            "summary": "auto",
+        },
     )
     print(response.output_text)
     print("Summary:")
-    summary = ""
-    for r in response.output:
-        if r.type == "reasoning":
-            for s in r.summary:
-                summary += s.text + " "
-    print(summary)
+
+    print(extract_reasoning_summary(response))
 
 
 print("=== Basic Text Chat ===")
-basic_text_chat("Write a one-sentence bedtime story about a unicorn.")
+basic_text_chat(
+    "Write a one-sentence bedtime story about a unicorn."
+)
 
 print("\n=== Structured Response Model ===")
 structured_response_model(
-    "gpt-5", "Create a calendar event for a meeting with Alice and Bob on July 24th."
+    "gpt-5",
+    "Create a calendar event for a meeting with Alice and Bob on July 24th.",
 )
 
 print("\n=== Structured Response JSON Mode ===")
-structured_response_json_mode("Alice and Bob are meeting on July 24th, 2025.")
+structured_response_json_mode(
+    "Alice and Bob are meeting on July 24th, 2025."
+)
 
 print("\n=== Structured Response Text ===")
 structure_response_text()
