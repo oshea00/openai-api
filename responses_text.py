@@ -1,5 +1,7 @@
 from openai import OpenAI
 from pydantic import BaseModel
+import json
+import httpx
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -7,15 +9,79 @@ from dotenv import load_dotenv
 # OPENAI_BASE_URL=
 load_dotenv()
 
-client = OpenAI()
+
+class LoggingHTTPClient(httpx.Client):
+    """
+    Custom HTTP client that logs all requests and responses for debugging.
+    """
+
+    def send(self, request, **kwargs):
+        print("=" * 80)
+        print("🔍 REQUEST DETAILS:")
+        print(f"Method: {request.method}")
+        print(f"URL: {request.url}")
+        print("Headers:")
+        for name, value in request.headers.items():
+            # Mask authorization header for security
+            if name.lower() == "authorization":
+                print(f"  {name}: Bearer ***masked***")
+            else:
+                print(f"  {name}: {value}")
+
+        if request.content:
+            try:
+                # Pretty print JSON content
+                content = request.content.decode("utf-8")
+                parsed_json = json.loads(content)
+                print("Request Body:")
+                print(json.dumps(parsed_json, indent=2))
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                print(f"Request Body (raw): {request.content}")
+
+        print("-" * 40)
+
+        # Send the actual request
+        response = super().send(request, **kwargs)
+
+        print("📥 RESPONSE DETAILS:")
+        print(f"Status Code: {response.status_code}")
+        print("Response Headers:")
+        for name, value in response.headers.items():
+            print(f"  {name}: {value}")
+
+        try:
+            # Pretty print JSON response
+            response_json = response.json()
+            print("Response Body:")
+            print(json.dumps(response_json, indent=2))
+        except json.JSONDecodeError:
+            print(f"Response Body (raw): {response.text}")
+
+        print("=" * 80)
+        print()
+
+        return response
+
+
+# Create OpenAI client with custom HTTP client for request logging
+client = OpenAI(http_client=LoggingHTTPClient())
 
 
 def basic_text_chat(question):
+    """
+    Demonstrates basic response creation with the responses API.
+    Uses the gpt-5 model to generate a simple text response.
+    """
     response = client.responses.create(model="gpt-5", input=question)
     print(response.output_text)
 
 
 def structured_response_model(model, question):
+    """
+    Demonstrates structured output using Pydantic models with the responses parse endpoint.
+    The model extracts information and returns it as a validated Pydantic object.
+    """
+
     class CalendarEvent(BaseModel):
         name: str
         date: str
@@ -42,7 +108,10 @@ def structured_response_model(model, question):
 
 
 def structured_response_json_mode(question):
-
+    """
+    Demonstrates JSON mode where the model is constrained to return valid JSON.
+    The structure is defined in the system prompt rather than enforced by schema.
+    """
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -59,7 +128,10 @@ def structured_response_json_mode(question):
 
 
 def structure_response_text():
-
+    """
+    Demonstrates strict JSON schema enforcement using responses API with structured format.
+    The model output is validated against the provided schema with strict mode enabled.
+    """
     response = client.responses.create(
         model="gpt-4o",
         input=[
@@ -110,13 +182,20 @@ def structure_response_text():
 
 
 def extract_reasoning_summary(response):
-    summary = ""
+    """
+    Extracts reasoning summary from a response object.
+    Returns a concatenated string of all reasoning summary text.
+    """
     return " ".join(
         s.text for r in response.output if r.type == "reasoning" for s in r.summary
     )
 
 
 def response_with_reasoning():
+    """
+    Demonstrates the responses API with reasoning capabilities enabled.
+    Shows how to extract and display both the main response and reasoning summary.
+    """
     response = client.responses.create(
         model="gpt-5",
         input=[
@@ -140,20 +219,50 @@ def response_with_reasoning():
     print(extract_reasoning_summary(response))
 
 
-print("=== Basic Text Chat ===")
-basic_text_chat("Write a one-sentence bedtime story about a unicorn.")
+def main():
+    """
+    Main function to execute all the example demonstrations.
+    Each demonstration is wrapped in a try-catch block to ensure
+    that errors in one example don't stop the execution of others.
+    """
+    print("=== Basic Text Chat ===")
+    try:
+        basic_text_chat("Write a one-sentence bedtime story about a unicorn.")
+    except Exception as e:
+        print(f"❌ Error in basic_text_chat: {e}")
+        print()
 
-print("\n=== Structured Response Model ===")
-structured_response_model(
-    "gpt-5",
-    "Create a calendar event for a meeting with Alice and Bob on July 24th.",
-)
+    print("\n=== Structured Response Model ===")
+    try:
+        structured_response_model(
+            "gpt-5",
+            "Create a calendar event for a meeting with Alice and Bob on July 24th.",
+        )
+    except Exception as e:
+        print(f"❌ Error in structured_response_model: {e}")
+        print()
 
-print("\n=== Structured Response JSON Mode ===")
-structured_response_json_mode("Alice and Bob are meeting on July 24th, 2025.")
+    print("\n=== Structured Response JSON Mode ===")
+    try:
+        structured_response_json_mode("Alice and Bob are meeting on July 24th, 2025.")
+    except Exception as e:
+        print(f"❌ Error in structured_response_json_mode: {e}")
+        print()
 
-print("\n=== Structured Response Text ===")
-structure_response_text()
+    print("\n=== Structured Response Text ===")
+    try:
+        structure_response_text()
+    except Exception as e:
+        print(f"❌ Error in structure_response_text: {e}")
+        print()
 
-print("\n=== Response with Reasoning ===")
-response_with_reasoning()
+    print("\n=== Response with Reasoning ===")
+    try:
+        response_with_reasoning()
+    except Exception as e:
+        print(f"❌ Error in response_with_reasoning: {e}")
+        print()
+
+
+if __name__ == "__main__":
+    main()
