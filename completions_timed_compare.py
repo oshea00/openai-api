@@ -1,5 +1,11 @@
 from openai import OpenAI
 import time
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+# OPENAI_API_KEY=jwt
+# OPENAI_BASE_URL=
+load_dotenv()
 
 client = OpenAI()
 

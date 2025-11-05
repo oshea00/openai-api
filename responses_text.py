@@ -1,13 +1,17 @@
 from openai import OpenAI
 from pydantic import BaseModel
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+# OPENAI_API_KEY=jwt
+# OPENAI_BASE_URL=
+load_dotenv()
 
 client = OpenAI()
 
 
 def basic_text_chat(question):
-    response = client.responses.create(
-        model="gpt-5", input=question
-    )
+    response = client.responses.create(model="gpt-5", input=question)
     print(response.output_text)
 
 
@@ -80,12 +84,8 @@ def structure_response_text():
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "explanation": {
-                                        "type": "string"
-                                    },
-                                    "output": {
-                                        "type": "string"
-                                    },
+                                    "explanation": {"type": "string"},
+                                    "output": {"type": "string"},
                                 },
                                 "required": [
                                     "explanation",
@@ -94,9 +94,7 @@ def structure_response_text():
                                 "additionalProperties": False,
                             },
                         },
-                        "final_answer": {
-                            "type": "string"
-                        },
+                        "final_answer": {"type": "string"},
                     },
                     "required": [
                         "steps",
@@ -114,10 +112,7 @@ def structure_response_text():
 def extract_reasoning_summary(response):
     summary = ""
     return " ".join(
-        s.text
-        for r in response.output
-        if r.type == "reasoning"
-        for s in r.summary
+        s.text for r in response.output if r.type == "reasoning" for s in r.summary
     )
 
 
@@ -146,9 +141,7 @@ def response_with_reasoning():
 
 
 print("=== Basic Text Chat ===")
-basic_text_chat(
-    "Write a one-sentence bedtime story about a unicorn."
-)
+basic_text_chat("Write a one-sentence bedtime story about a unicorn.")
 
 print("\n=== Structured Response Model ===")
 structured_response_model(
@@ -157,9 +150,7 @@ structured_response_model(
 )
 
 print("\n=== Structured Response JSON Mode ===")
-structured_response_json_mode(
-    "Alice and Bob are meeting on July 24th, 2025."
-)
+structured_response_json_mode("Alice and Bob are meeting on July 24th, 2025.")
 
 print("\n=== Structured Response Text ===")
 structure_response_text()
