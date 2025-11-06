@@ -33,6 +33,8 @@ from openai import OpenAI
 from pydantic import BaseModel
 import json
 import httpx
+import sys
+import argparse
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -296,4 +298,31 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(
+        description="OpenAI Responses API demonstrations with optional logging to file"
+    )
+    parser.add_argument(
+        "--log-file",
+        "-l",
+        type=str,
+        help="Optional log file to write output to instead of console",
+    )
+
+    args = parser.parse_args()
+
+    # Redirect output to file if specified
+    if args.log_file:
+        original_stdout = sys.stdout
+        try:
+            with open(args.log_file, "w", encoding="utf-8") as log_file:
+                sys.stdout = log_file
+                main()
+        except Exception as e:
+            sys.stdout = original_stdout
+            print(f"Error writing to log file '{args.log_file}': {e}")
+            sys.exit(1)
+        finally:
+            sys.stdout = original_stdout
+        print(f"Output written to: {args.log_file}")
+    else:
+        main()
