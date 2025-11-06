@@ -1,3 +1,34 @@
+"""
+Responses API: Structured Responses and Reasoning Capabilities
+
+This script demonstrates various approaches to get structured responses and reasoning
+capabilities from the OpenAI Responses API. It serves as a counterpart to the legacy
+chat completions API, showcasing the newer response formats and enhanced features
+available through the modern responses interface.
+
+Key demonstrations include:
+1. Basic text responses - Simple conversational responses using the responses API
+2. Structured responses using Pydantic models (responses parse endpoint)
+3. JSON mode responses with traditional chat completions (for comparison)
+4. Strict JSON schema enforcement using the responses API text format
+5. Reasoning capabilities with configurable effort levels and automatic summaries
+
+Responses API Advantages:
+- Native support for reasoning with configurable effort levels
+- Built-in reasoning summary extraction capabilities
+- Streamlined structured output with text_format parameter
+- Enhanced schema validation and parsing
+
+Debugging Features:
+- Custom LoggingHTTPClient that intercepts and logs all HTTP requests/responses
+- Shows exactly how the OpenAI library constructs API calls behind the scenes
+- Displays request headers, body, response status, and full response data
+- Masks sensitive authorization tokens for security
+
+This provides both functional examples of the modern responses API patterns and visibility
+into the underlying HTTP communication for debugging and learning purposes.
+"""
+
 from openai import OpenAI
 from pydantic import BaseModel
 import json

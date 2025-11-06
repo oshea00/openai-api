@@ -1,3 +1,27 @@
+"""
+Legacy Chat Completions API: Tool Calling and Structured Responses
+
+This script demonstrates various approaches to get tool calling and structured responses
+from the OpenAI legacy chat completions API. It showcases different response formats
+and interaction patterns that are available through the traditional chat interface.
+
+Key demonstrations include:
+1. Basic text chat - Simple conversational responses
+2. Structured responses using Pydantic models (beta parse endpoint)
+3. JSON mode responses with schema validation
+4. Strict JSON schema enforcement with additionalProperties control
+5. Tool calling with the two-phase pattern (tool_calls -> tool results -> final response)
+
+Debugging Features:
+- Custom LoggingHTTPClient that intercepts and logs all HTTP requests/responses
+- Shows exactly how the OpenAI library constructs API calls behind the scenes
+- Displays request headers, body, response status, and full response data
+- Masks sensitive authorization tokens for security
+
+This provides both functional examples of different API patterns and visibility
+into the underlying HTTP communication for debugging and learning purposes.
+"""
+
 from openai import OpenAI
 from pydantic import BaseModel
 import json
