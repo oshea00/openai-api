@@ -51,19 +51,25 @@ The repository contains example scripts that showcase different API patterns, re
    cd openai-api
    ```
 
-2. **Install dependencies**
+2. **Create and activate a virtual environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install dependencies**
    ```bash
    pip install openai pydantic python-dotenv httpx
    ```
 
-3. **Set up environment variables** (optional)
+4. **Set up environment variables** (optional)
    Create a `.env` file with your OpenAI API credentials. These variables are optional but useful if you are running a local model that uses OpenAI conventions, in which case the base URL may be different as well as the API key:
    ```
    OPENAI_API_KEY=your_jwt_token_here
    OPENAI_BASE_URL=your_base_url_here
    ```
 
-4. **Run example scripts**
+5. **Run example scripts**
    ```bash
    python legacy_chat_text.py      # Legacy API examples
    python responses_text.py        # Responses API examples
