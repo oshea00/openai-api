@@ -25,7 +25,7 @@ The repository contains example scripts that showcase different API patterns, re
 - **`completions.py`** - Comprehensive multimodal examples and model comparisons
   - Demonstrates "one shot" prompts on GPT-4.1-mini vs GPT-5-mini
   - Shows how to configure reasoning models for optimal speed
-  - **PDF text analysis**: Extract and analyze text from PDF documents using pymupdf
+  - **PDF text analysis**: Extract and analyze pages from PDF documents using pymupdf (text and image approaches).
   - **Image analysis**: Vision capabilities with detailed image descriptions
   - **Multimodal workflows**: Combined text, document, and image processing
   - Base64 encoding for image transmission and proper data URL formatting
