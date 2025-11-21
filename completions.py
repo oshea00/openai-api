@@ -81,25 +81,6 @@ def get_completion_5_oneshot(messages: list[dict]) -> str:
     return response.choices[0].message
 
 
-def get_completion_4_multimodal(messages: list[dict]) -> str:
-    """
-    Demonstrates multimodal chat completion using GPT-4.1-mini model.
-    This function can handle messages with both text and document content.
-    Uses temperature=0 for deterministic responses.
-
-    Args:
-        messages: List of message dictionaries with 'role' and 'content' keys.
-                 Content can include text and document attachments.
-
-    Returns:
-        str: The message object from the model's response
-    """
-    response = client.chat.completions.create(
-        model="gpt-4.1-mini", messages=messages, temperature=0
-    )
-    return response.choices[0].message
-
-
 def extract_pdf_text(pdf_path: str) -> str:
     """
     Extract text content from a PDF file using pymupdf (fitz).
@@ -469,7 +450,7 @@ def main():
 
         if pdf_messages:  # Only proceed if PDF text was successfully extracted
             print("📄 Analyzing extracted PDF content...")
-            response = get_completion_4_multimodal(messages=pdf_messages)
+            response = get_completion_4(messages=pdf_messages)
             print("� PDF Analysis Result:")
             print(response.content)
             print()
@@ -488,9 +469,11 @@ def main():
 
         pdf_visual_messages = create_pdf_visual_summary_messages(pdf_path)
 
-        if pdf_visual_messages:  # Only proceed if PDF pages were successfully rasterized
+        if (
+            pdf_visual_messages
+        ):  # Only proceed if PDF pages were successfully rasterized
             print("🖼️ Analyzing PDF pages as images...")
-            response = get_completion_4_multimodal(messages=pdf_visual_messages)
+            response = get_completion_4(messages=pdf_visual_messages)
             print("📊 PDF Visual Analysis Result:")
             print(response.content)
             print()
@@ -511,7 +494,7 @@ def main():
 
         if image_messages:  # Only proceed if image was successfully encoded
             print("🖼️ Analyzing image content...")
-            response = get_completion_4_multimodal(messages=image_messages)
+            response = get_completion_4(messages=image_messages)
             print("📸 Image Analysis Result:")
             print(response.content)
             print()
