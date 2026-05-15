@@ -42,6 +42,8 @@ from dotenv import load_dotenv
 # OPENAI_BASE_URL=
 load_dotenv()
 
+MODEL = "gpt-5.5"  # "gpt-oss:20b"
+
 
 class LoggingHTTPClient(httpx.Client):
     """
@@ -103,9 +105,9 @@ client = OpenAI(http_client=LoggingHTTPClient())
 def basic_text_chat(question):
     """
     Demonstrates basic response creation with the responses API.
-    Uses the gpt-5 model to generate a simple text response.
+    Uses the model to generate a simple text response.
     """
-    response = client.responses.create(model="gpt-5", input=question)
+    response = client.responses.create(model=MODEL, input=question)
     print(response.output_text)
 
 
@@ -230,7 +232,7 @@ def response_with_reasoning():
     Shows how to extract and display both the main response and reasoning summary.
     """
     response = client.responses.create(
-        model="gpt-5",
+        model=MODEL,
         input=[
             {
                 "role": "system",
@@ -268,7 +270,7 @@ def main():
     print("\n=== Structured Response Model ===")
     try:
         structured_response_model(
-            "gpt-5",
+            MODEL,
             "Create a calendar event for a meeting with Alice and Bob on July 24th.",
         )
     except Exception as e:

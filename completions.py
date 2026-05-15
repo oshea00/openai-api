@@ -2,8 +2,8 @@
 Completion Models Comparison: Non-Reasoning vs Reasoning
 
 This script demonstrates and compares "one shot" prompts between:
-1. A non-reasoning model (GPT-4.1-mini)
-2. A reasoning model (GPT-5-mini) configured for expedient responses
+1. A nonreasoning model (GPT-4.1)
+2. A reasoning model (GPT-5.5) configured for expedient responses
 
 The purpose is to show how to configure reasoning models for optimal speed while
 still leveraging their enhanced capabilities. The reasoning model is set up with:
@@ -46,7 +46,7 @@ client = OpenAI()
 
 def get_completion_4(messages: list[dict]) -> str:
     """
-    Demonstrates basic chat completion using GPT-4.1-mini model.
+    Demonstrates basic chat completion using GPT-4.1 model.
     Uses temperature=0 for deterministic responses.
 
     Args:
@@ -56,7 +56,7 @@ def get_completion_4(messages: list[dict]) -> str:
         str: The message object from the model's response
     """
     response = client.chat.completions.create(
-        model="gpt-4.1-mini", messages=messages, temperature=0
+        model="gpt-4.1", messages=messages, temperature=0
     )
     return response.choices[0].message
 
@@ -73,10 +73,10 @@ def get_completion_5_oneshot(messages: list[dict]) -> str:
         str: The message object from the model's response
     """
     response = client.chat.completions.create(
-        model="gpt-5-mini",
+        model="gpt-5.5",
         messages=messages,
         verbosity="low",
-        reasoning_effort="minimal",
+        reasoning_effort="none",
     )
     return response.choices[0].message
 
@@ -221,6 +221,7 @@ Since you can see the actual page layouts, diagrams, charts, and visual elements
 4. **Key Content**: What are the main topics, concepts, or information covered?
 5. **Target Audience**: Who appears to be the intended audience?
 6. **Notable Features**: Any unique formatting, highlighting, or special elements
+7. **Extracted Text**: Show the full text extracted
 
 Please be thorough in your visual analysis, as you can see details that text extraction might miss.""",
             }
@@ -295,10 +296,8 @@ Content:
 {pdf_text}
 
 Please provide:
-1. A brief overview of the document's purpose
-2. Main topics and sections covered
-3. Key concepts or important points
-4. Target audience (if apparent)""",
+1. Page content
+""",
             },
         ]
 
@@ -422,7 +421,7 @@ def main():
         },
     ]
 
-    print("=== GPT-4.1-mini Completion ===")
+    print("=== GPT-4.1 Completion ===")
     try:
         response = get_completion_4(messages=test_messages)
         print(response)
@@ -441,7 +440,7 @@ def main():
         print()
 
     # Demonstrate PDF text extraction and analysis
-    print("=== GPT-4.1-mini PDF Text Analysis ===")
+    print("=== GPT-5.5 PDF Text Analysis ===")
     try:
         pdf_path = "data/PyTorchCheatsheet.pdf"
         print(f"Extracting text from: {pdf_path}")
@@ -462,9 +461,9 @@ def main():
         print()
 
     # Demonstrate PDF visual analysis (pages as images)
-    print("=== GPT-4.1-mini PDF Visual Analysis ===")
+    print("=== GPT-5.5 PDF Visual Analysis ===")
     try:
-        pdf_path = "data/PyTorchCheatsheet.pdf"
+        pdf_path = "data/claude_tester.png"
         print(f"Converting PDF pages to images: {pdf_path}")
 
         pdf_visual_messages = create_pdf_visual_summary_messages(pdf_path)
@@ -485,7 +484,7 @@ def main():
         print()
 
     # Demonstrate image analysis with vision capabilities
-    print("=== GPT-4.1-mini Image Analysis ===")
+    print("=== GPT-5.5 Image Analysis ===")
     try:
         image_path = "data/claude_tester.png"
         print(f"Analyzing image: {image_path}")

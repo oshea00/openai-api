@@ -35,6 +35,8 @@ from dotenv import load_dotenv
 # OPENAI_BASE_URL=
 load_dotenv()
 
+MODEL = "gpt-4o"
+
 
 class LoggingHTTPClient(httpx.Client):
     """
@@ -99,7 +101,7 @@ def basic_text_chat(question):
     The model generates a text response without any special formatting or tools.
     """
     response = client.chat.completions.create(
-        model="gpt-4o", messages=[{"role": "user", "content": question}]
+        model=MODEL, messages=[{"role": "user", "content": question}]
     )
     print(response.choices[0].message.content)
 
@@ -135,7 +137,7 @@ def structured_response_json_mode(question):
     The structure is defined in the system prompt rather than enforced by schema.
     """
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model=MODEL,
         messages=[
             {
                 "role": "system",
@@ -155,7 +157,7 @@ def structure_response_text():
     The model output is validated against the provided schema with strict mode enabled.
     """
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model=MODEL,
         messages=[
             {
                 "role": "system",
@@ -251,7 +253,7 @@ def tools_call_example():
     ]
 
     response = client.chat.completions.create(
-        model="gpt-4o", messages=messages, tools=tools, tool_choice="auto"
+        model=MODEL, messages=messages, tools=tools, tool_choice="auto"
     )
 
     response_message = response.choices[0].message
@@ -278,9 +280,7 @@ def tools_call_example():
                     }
                 )
 
-        second_response = client.chat.completions.create(
-            model="gpt-4o", messages=messages
-        )
+        second_response = client.chat.completions.create(model=MODEL, messages=messages)
 
         print(second_response.choices[0].message.content)
     else:
@@ -303,7 +303,7 @@ def main():
     print("\n=== Structured Response Model ===")
     try:
         structured_response_model(
-            "gpt-4o",
+            MODEL,
             "Create a calendar event for a meeting with Alice and Bob on July 24th.",
         )
     except Exception as e:
