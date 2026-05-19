@@ -43,6 +43,8 @@ load_dotenv()
 
 client = OpenAI()
 
+MODEL = "gpt-5.5"
+
 
 def get_completion_4(messages: list[dict]) -> str:
     """
@@ -56,7 +58,7 @@ def get_completion_4(messages: list[dict]) -> str:
         str: The message object from the model's response
     """
     response = client.chat.completions.create(
-        model="gpt-4.1", messages=messages, temperature=0
+        model=MODEL, messages=messages  # , temperature=0
     )
     return response.choices[0].message
 
@@ -75,8 +77,8 @@ def get_completion_5_oneshot(messages: list[dict]) -> str:
     response = client.chat.completions.create(
         model="gpt-5.5",
         messages=messages,
-        verbosity="low",
-        reasoning_effort="none",
+        # verbosity="low",
+        # reasoning_effort="none",
     )
     return response.choices[0].message
 
@@ -421,7 +423,7 @@ def main():
         },
     ]
 
-    print("=== GPT-4.1 Completion ===")
+    print(f"=== {MODEL} Completion ===")
     try:
         response = get_completion_4(messages=test_messages)
         print(response)
@@ -430,7 +432,7 @@ def main():
         print(f"❌ Error in get_completion_4: {e}")
         print()
 
-    print("=== GPT-5-mini One-shot Completion ===")
+    print(f"=== {MODEL} One-shot Completion ===")
     try:
         response = get_completion_5_oneshot(messages=test_messages)
         print(response)
@@ -440,7 +442,7 @@ def main():
         print()
 
     # Demonstrate PDF text extraction and analysis
-    print("=== GPT-5.5 PDF Text Analysis ===")
+    print(f"=== {MODEL} PDF Text Analysis ===")
     try:
         pdf_path = "data/PyTorchCheatsheet.pdf"
         print(f"Extracting text from: {pdf_path}")
@@ -461,7 +463,7 @@ def main():
         print()
 
     # Demonstrate PDF visual analysis (pages as images)
-    print("=== GPT-5.5 PDF Visual Analysis ===")
+    print(f"=== {MODEL} PDF Visual Analysis ===")
     try:
         pdf_path = "data/claude_tester.png"
         print(f"Converting PDF pages to images: {pdf_path}")
@@ -484,7 +486,7 @@ def main():
         print()
 
     # Demonstrate image analysis with vision capabilities
-    print("=== GPT-5.5 Image Analysis ===")
+    print(f"==={MODEL} Image Analysis ===")
     try:
         image_path = "data/claude_tester.png"
         print(f"Analyzing image: {image_path}")

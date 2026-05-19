@@ -35,7 +35,7 @@ from dotenv import load_dotenv
 # OPENAI_BASE_URL=
 load_dotenv()
 
-MODEL = "gpt-4o"
+MODEL = "gpt-5.5"
 
 
 class LoggingHTTPClient(httpx.Client):
@@ -293,14 +293,14 @@ def main():
     Each demonstration is wrapped in a try-catch block to ensure
     that errors in one example don't stop the execution of others.
     """
-    print("=== Basic Text Chat ===")
+    print(f"=== {MODEL}Basic Text Chat ===")
     try:
         basic_text_chat("Write a one-sentence bedtime story about a unicorn.")
     except Exception as e:
         print(f"❌ Error in basic_text_chat: {e}")
         print()
 
-    print("\n=== Structured Response Model ===")
+    print(f"\n=== {MODEL} Structured Response Model ===")
     try:
         structured_response_model(
             MODEL,
@@ -310,21 +310,21 @@ def main():
         print(f"❌ Error in structured_response_model: {e}")
         print()
 
-    print("\n=== Structured Response JSON Mode ===")
+    print(f"\n=== {MODEL} Structured Response JSON Mode ===")
     try:
         structured_response_json_mode("Alice and Bob are meeting on July 24th, 2025.")
     except Exception as e:
         print(f"❌ Error in structured_response_json_mode: {e}")
         print()
 
-    print("\n=== Structured Response Text ===")
+    print(f"\n=== {MODEL} Structured Response Text ===")
     try:
         structure_response_text()
     except Exception as e:
         print(f"❌ Error in structure_response_text: {e}")
         print()
 
-    print("\n=== Tools Call Example ===")
+    print(f"\n=== {MODEL} Tools Call Example ===")
     try:
         tools_call_example()
     except Exception as e:
