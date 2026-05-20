@@ -9,7 +9,7 @@ available through the modern responses interface.
 Key demonstrations include:
 1. Basic text responses - Simple conversational responses using the responses API
 2. Structured responses using Pydantic models (responses parse endpoint)
-3. JSON mode responses with traditional chat completions (for comparison)
+3. JSON mode responses using the responses API text format
 4. Strict JSON schema enforcement using the responses API text format
 5. Reasoning capabilities with configurable effort levels and automatic summaries
 
@@ -147,19 +147,23 @@ def structured_response_json_mode(question):
     Demonstrates JSON mode where the model is constrained to return valid JSON.
     The structure is defined in the system prompt rather than enforced by schema.
     """
-    response = client.chat.completions.create(
+    response = client.responses.create(
         model=MODEL,
-        messages=[
+        input=[
             {
                 "role": "system",
                 "content": "Extract the event information as json with keys name, date, participants.",
             },
             {"role": "user", "content": question},
         ],
-        response_format={"type": "json_object"},
+        text={
+            "format": {
+                "type": "json_object",
+            }
+        },
     )
 
-    print(response.choices[0].message.content)
+    print(response.output_text)
 
 
 def structure_response_text():
