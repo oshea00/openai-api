@@ -35,6 +35,8 @@ import json
 import httpx
 import sys
 import argparse
+import base64
+from pathlib import Path
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -220,6 +222,65 @@ def structure_response_text():
     print(response.output_text)
 
 
+def vision_image_input():
+    """
+    Demonstrates vision input by sending an image to the responses API.
+    The image is base64-encoded and passed as an input_image content block.
+    """
+    image_path = Path(__file__).parent / "data" / "claude_tester.png"
+    image_data = base64.standard_b64encode(image_path.read_bytes()).decode("utf-8")
+
+    response = client.responses.create(
+        model=MODEL,
+        input=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "input_image",
+                        "image_url": f"data:image/png;base64,{image_data}",
+                    },
+                    {
+                        "type": "input_text",
+                        "text": "Describe what you see in this image.",
+                    },
+                ],
+            }
+        ],
+    )
+    print(response.output_text)
+
+
+def pdf_input():
+    """
+    Demonstrates PDF input by sending a PDF document to the responses API.
+    The PDF is base64-encoded and passed as an input_file content block.
+    """
+    pdf_path = Path(__file__).parent / "data" / "PyTorchCheatsheet.pdf"
+    pdf_data = base64.standard_b64encode(pdf_path.read_bytes()).decode("utf-8")
+
+    response = client.responses.create(
+        model=MODEL,
+        input=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "input_file",
+                        "filename": "PyTorchCheatsheet.pdf",
+                        "file_data": f"data:application/pdf;base64,{pdf_data}",
+                    },
+                    {
+                        "type": "input_text",
+                        "text": "Summarize the key topics covered in this document.",
+                    },
+                ],
+            }
+        ],
+    )
+    print(response.output_text)
+
+
 def extract_reasoning_summary(response):
     """
     Extracts reasoning summary from a response object.
@@ -300,6 +361,20 @@ def main():
         response_with_reasoning()
     except Exception as e:
         print(f"❌ Error in response_with_reasoning: {e}")
+        print()
+
+    print(f"\n=== {MODEL} Vision Image Input ===")
+    try:
+        vision_image_input()
+    except Exception as e:
+        print(f"❌ Error in vision_image_input: {e}")
+        print()
+
+    print(f"\n=== {MODEL} PDF Input ===")
+    try:
+        pdf_input()
+    except Exception as e:
+        print(f"❌ Error in pdf_input: {e}")
         print()
 
 
