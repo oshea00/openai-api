@@ -1,19 +1,7 @@
 """
-Completion Models Comparison: Non-Reasoning vs Reasoning
+Multimodal OpenAI API Examples
 
-This script demonstrates and compares "one shot" prompts between:
-1. A nonreasoning model (GPT-4.1)
-2. A reasoning model (GPT-5.5) configured for expedient responses
-
-The purpose is to show how to configure reasoning models for optimal speed while
-still leveraging their enhanced capabilities. The reasoning model is set up with:
-- verbosity="low" to minimize output overhead
-- reasoning_effort="minimal" to reduce thinking time
-
-This comparison helps understand the trade-offs between model types and how to
-tune reasoning models when speed is a priority while maintaining quality.
-
-Additionally, this script includes multimodal examples that demonstrate:
+This script includes multimodal examples that demonstrate:
 - PDF text analysis: Extract text from PDF documents using pymupdf (fitz)
 - PDF visual analysis: Convert PDF pages to images for visual document analysis
 - Image analysis: Include images in chat messages for visual analysis
@@ -25,9 +13,7 @@ Additionally, this script includes multimodal examples that demonstrate:
 """
 
 from openai import OpenAI
-import time
 import base64
-import io
 
 try:
     import fitz  # pymupdf - install with: pip install pymupdf
@@ -46,39 +32,18 @@ client = OpenAI()
 MODEL = "gpt-5.5"
 
 
-def get_completion_4(messages: list[dict]) -> str:
+def get_completion_basic(messages: list[dict]) -> str:
     """
-    Demonstrates basic chat completion using GPT-4.1 model.
-    Uses temperature=0 for deterministic responses.
+    Execute a chat completion request for the provided messages.
 
     Args:
         messages: List of message dictionaries with 'role' and 'content' keys
 
     Returns:
-        str: The message object from the model's response
+        str: The message object from the model response
     """
     response = client.chat.completions.create(
         model=MODEL, messages=messages  # , temperature=0
-    )
-    return response.choices[0].message
-
-
-def get_completion_5_oneshot(messages: list[dict]) -> str:
-    """
-    Demonstrates chat completion using GPT-5-mini model with reasoning capabilities.
-    Uses low verbosity and minimal reasoning effort for faster responses.
-
-    Args:
-        messages: List of message dictionaries with 'role' and 'content' keys
-
-    Returns:
-        str: The message object from the model's response
-    """
-    response = client.chat.completions.create(
-        model="gpt-5.5",
-        messages=messages,
-        # verbosity="low",
-        # reasoning_effort="none",
     )
     return response.choices[0].message
 
@@ -407,7 +372,7 @@ Please be thorough and descriptive in your analysis.""",
 
 def main():
     """
-    Main function to execute completion demonstrations.
+    Main function to execute multimodal API demonstrations.
     Each demonstration is wrapped in a try-catch block to ensure
     that errors in one example don't stop the execution of others.
     """
@@ -423,22 +388,13 @@ def main():
         },
     ]
 
-    print(f"=== {MODEL} Completion ===")
+    print(f"=== {MODEL} Basic Text Completion ===")
     try:
-        response = get_completion_4(messages=test_messages)
+        response = get_completion_basic(messages=test_messages)
         print(response)
         print()
     except Exception as e:
-        print(f"❌ Error in get_completion_4: {e}")
-        print()
-
-    print(f"=== {MODEL} One-shot Completion ===")
-    try:
-        response = get_completion_5_oneshot(messages=test_messages)
-        print(response)
-        print()
-    except Exception as e:
-        print(f"❌ Error in get_completion_5_oneshot: {e}")
+        print(f"❌ Error in basic text completion: {e}")
         print()
 
     # Demonstrate PDF text extraction and analysis
@@ -451,7 +407,7 @@ def main():
 
         if pdf_messages:  # Only proceed if PDF text was successfully extracted
             print("📄 Analyzing extracted PDF content...")
-            response = get_completion_4(messages=pdf_messages)
+            response = get_completion_basic(messages=pdf_messages)
             print("� PDF Analysis Result:")
             print(response.content)
             print()
@@ -474,7 +430,7 @@ def main():
             pdf_visual_messages
         ):  # Only proceed if PDF pages were successfully rasterized
             print("🖼️ Analyzing PDF pages as images...")
-            response = get_completion_4(messages=pdf_visual_messages)
+            response = get_completion_basic(messages=pdf_visual_messages)
             print("📊 PDF Visual Analysis Result:")
             print(response.content)
             print()
@@ -495,7 +451,7 @@ def main():
 
         if image_messages:  # Only proceed if image was successfully encoded
             print("🖼️ Analyzing image content...")
-            response = get_completion_4(messages=image_messages)
+            response = get_completion_basic(messages=image_messages)
             print("📸 Image Analysis Result:")
             print(response.content)
             print()

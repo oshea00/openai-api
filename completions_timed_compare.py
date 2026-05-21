@@ -5,8 +5,8 @@ This script performs a quantitative performance comparison between non-reasoning
 and reasoning models to measure the actual time overhead of reasoning capabilities.
 
 The test runs the same prompt 4 times on each model:
-- GPT-4.1-mini (non-reasoning): baseline performance
-- GPT-5-mini (reasoning): configured with minimal reasoning effort
+- BASELINE_MODEL (non-reasoning): baseline performance
+- REASONING_MODEL (reasoning): configured with minimal reasoning effort
 
 Expected outcome: The reasoning model takes longer overall than the non-reasoning
 model, even when configured for speed (low verbosity, minimal reasoning effort).
@@ -29,10 +29,13 @@ load_dotenv()
 
 client = OpenAI()
 
+BASELINE_MODEL = "gpt-4.1-mini"
+REASONING_MODEL = "gpt-5-mini"
+
 
 def get_completion_4o(messages: list[dict]) -> str:
     """
-    Demonstrates basic chat completion using GPT-4.1-mini model.
+    Demonstrates basic chat completion using the configured baseline model.
     Uses temperature=0 for deterministic responses.
 
     Args:
@@ -42,14 +45,14 @@ def get_completion_4o(messages: list[dict]) -> str:
         str: The message object from the model's response
     """
     response = client.chat.completions.create(
-        model="gpt-4.1-mini", messages=messages, temperature=0
+        model=BASELINE_MODEL, messages=messages, temperature=0
     )
     return response.choices[0].message
 
 
 def get_completion_5_oneshot(messages: list[dict]) -> str:
     """
-    Demonstrates chat completion using GPT-5-mini model with reasoning capabilities.
+    Demonstrates chat completion using the configured reasoning model.
     Uses low verbosity and minimal reasoning effort for faster responses.
 
     Args:
@@ -59,7 +62,7 @@ def get_completion_5_oneshot(messages: list[dict]) -> str:
         str: The message object from the model's response
     """
     response = client.chat.completions.create(
-        model="gpt-5-mini",
+        model=REASONING_MODEL,
         messages=messages,
         verbosity="low",
         reasoning_effort="minimal",
@@ -69,7 +72,7 @@ def get_completion_5_oneshot(messages: list[dict]) -> str:
 
 def timed_comparison_test():
     """
-    Performs a timed comparison between GPT-4.1-mini and GPT-5-mini models.
+    Performs a timed comparison between the configured baseline and reasoning models.
     Runs each model 4 times and measures total execution time.
 
     Returns:
@@ -113,12 +116,12 @@ def main():
     try:
         response_4o, total_4o_ms, response_5, total_5_ms = timed_comparison_test()
 
-        print("GPT-4.1-mini Response:")
+        print(f"{BASELINE_MODEL} Response:")
         print(response_4o)
         print(f"Total execution time for get_completion_4o (4 runs): {total_4o_ms} ms")
         print()
 
-        print("GPT-5-mini Response:")
+        print(f"{REASONING_MODEL} Response:")
         print(response_5)
         print(
             f"Total execution time for get_completion_5_oneshot (4 runs): {total_5_ms} ms"
@@ -129,9 +132,13 @@ def main():
         if total_4o_ms > 0 and total_5_ms > 0:
             speed_ratio = total_4o_ms / total_5_ms
             if speed_ratio > 1:
-                print(f"GPT-5-mini is {speed_ratio:.2f}x faster than GPT-4.1-mini")
+                print(
+                    f"{REASONING_MODEL} is {speed_ratio:.2f}x faster than {BASELINE_MODEL}"
+                )
             else:
-                print(f"GPT-4.1-mini is {1/speed_ratio:.2f}x faster than GPT-5-mini")
+                print(
+                    f"{BASELINE_MODEL} is {1/speed_ratio:.2f}x faster than {REASONING_MODEL}"
+                )
 
     except Exception as e:
         print(f"❌ Error in timed_comparison_test: {e}")

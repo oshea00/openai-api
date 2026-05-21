@@ -12,12 +12,7 @@ Key demonstrations include:
 3. JSON mode responses using the responses API text format
 4. Strict JSON schema enforcement using the responses API text format
 5. Reasoning capabilities with configurable effort levels and automatic summaries
-
-Responses API Advantages:
-- Native support for reasoning with configurable effort levels
-- Built-in reasoning summary extraction capabilities
-- Streamlined structured output with text_format parameter
-- Enhanced schema validation and parsing
+6. Multimodal feature for image/pdf extraction.
 
 Debugging Features:
 - Custom LoggingHTTPClient that intercepts and logs all HTTP requests/responses
@@ -356,7 +351,7 @@ def main():
         print(f"❌ Error in structure_response_text: {e}")
         print()
 
-    print("\n=== Response with Reasoning ===")
+    print(f"\n=== {MODEL} Response with Reasoning ===")
     try:
         response_with_reasoning()
     except Exception as e:
