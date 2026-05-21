@@ -16,7 +16,7 @@ The repository contains example scripts that showcase different API patterns, re
   - Tool calling with two-phase pattern (tool_calls → tool results → final response)
   - Custom HTTP logging client for debugging API interactions
 
-- **`responses_text.py`** - Modern examples using the Responses API
+- **`responses_multimodal.py`** - Modern examples using the Responses API
   - Native structured responses with text_format parameter
   - Reasoning capabilities with configurable effort levels
   - Built-in reasoning summary extraction
