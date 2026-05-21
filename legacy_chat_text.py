@@ -98,10 +98,13 @@ client = OpenAI(http_client=LoggingHTTPClient())
 def basic_text_chat(question):
     """
     Demonstrates basic chat completion with a simple user message.
-    The model generates a text response without any special formatting or tools.
+    The model generates a text response without any special formatting or tools,
+    using medium reasoning effort.
     """
     response = client.chat.completions.create(
-        model=MODEL, messages=[{"role": "user", "content": question}]
+        model=MODEL,
+        messages=[{"role": "user", "content": question}],
+        reasoning_effort="medium",
     )
     print(response.choices[0].message.content)
 
